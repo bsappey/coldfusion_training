@@ -1417,7 +1417,279 @@ function getModule3Data() {
         ]
     };
 }
-function getModule4Data() { return { title: 'File & Document Operations', description: 'File I/O, PDF, Excel, and Image Processing', versions: ['2021', '2023', '2025'], lessons: [] }; }
+/**
+ * Module 4: File & Document Operations
+ */
+function getModule4Data() {
+    return {
+        title: 'File & Document Operations',
+        description: 'File I/O, PDF, Excel, and Image Processing',
+        versions: ['2021', '2023', '2025'],
+        lessons: [
+            {
+                title: '1. File System Basics and Paths',
+                content: 'Before you can read/write files, you need to understand paths, where your code is running from, and which directories are safe to use. This lesson focuses on practical path handling in ColdFusion.',
+                sections: [
+                    {
+                        title: 'Introduction',
+                        content: 'ColdFusion file operations always work with server-side paths. Prefer absolute paths, use a safe “base directory”, and never build file paths directly from untrusted user input.',
+                        sections: [
+                            {
+                                title: 'Key Concepts',
+                                list: [
+                                    '<strong>Absolute vs relative paths:</strong> Many file APIs accept relative paths, but relative paths are resolved against <code>getTempDirectory()</code> (not your web root).',
+                                    '<strong>Template location:</strong> Use <code>getCurrentTemplatePath()</code> + <code>getDirectoryFromPath()</code> when you need an absolute folder for the currently-running file.',
+                                    '<strong>Temp directory:</strong> Use <code>getTempDirectory()</code> for transient files (logs, exports, intermediate processing).',
+                                    '<strong>Path traversal risk:</strong> Never allow <code>../</code> or absolute paths from user input to reach file APIs.'
+                                ]
+                            },
+                            {
+                                title: 'Best Practices & Tips',
+                                list: [
+                                    '<strong>Choose a base directory:</strong> Keep uploads/exports under a dedicated folder (and ideally outside the web root).',
+                                    '<strong>Validate names, not paths:</strong> If users select a filename, whitelist allowed characters and append it to a server-side base directory.',
+                                    '<strong>Use UUIDs for generated files:</strong> Avoid collisions and reduce information leakage.'
+                                ],
+                                tip: 'Rule of thumb: accept “which file” as an ID, but determine “where it lives” on the server yourself.'
+                            },
+                            {
+                                title: 'Version-Specific Notes & Gotchas',
+                                sections: [
+                                    {
+                                        title: 'ColdFusion 2021',
+                                        versionBadge: '2021',
+                                        list: [
+                                            '<strong>File functions:</strong> <code>fileRead()</code>, <code>fileWrite()</code>, and directory functions are fully supported.',
+                                            '<strong>Gotcha:</strong> Relative paths resolve against the temp directory for many functions/tags.'
+                                        ]
+                                    },
+                                    {
+                                        title: 'ColdFusion 2023',
+                                        versionBadge: '2023',
+                                        list: [
+                                            '<strong>No change in basics:</strong> Path handling rules remain the same.',
+                                            '<strong>Tip:</strong> Keep file operations behind a service layer if you plan to swap storage (local → S3/Azure/GCS in Module 5).'
+                                        ]
+                                    },
+                                    {
+                                        title: 'ColdFusion 2025',
+                                        versionBadge: '2025',
+                                        list: [
+                                            '<strong>No change in basics:</strong> Same core file/directory APIs as 2021/2023.',
+                                            '<strong>Tip:</strong> Treat file I/O as a potentially expensive operation; cache results where appropriate.'
+                                        ]
+                                    },
+                                    {
+                                        title: 'Common Gotchas Across All Versions',
+                                        list: [
+                                            '<strong>Permissions:</strong> Your CF service account must have OS permissions to read/write the target folders.',
+                                            '<strong>Web accessibility:</strong> Files written to <code>getTempDirectory()</code> usually aren’t web-accessible (good for security, confusing for demos).'
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                title: 'Documentation References',
+                                list: [
+                                    '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-e-g/getcurrenttemplatepath.html" target="_blank">Adobe: getCurrentTemplatePath()</a>',
+                                    '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-e-g/getdirectoryfrompath.html" target="_blank">Adobe: getDirectoryFromPath()</a>',
+                                    '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-e-g/gettempdirectory.html" target="_blank">Adobe: getTempDirectory()</a>'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        title: 'Finding your working directories',
+                        content: 'This example shows how to get the current template path, its directory, and the server temp directory. You’ll use these patterns throughout Module 4.',
+                        code: {
+                            tag: '<!--- CF 2021+ - Paths and Temp Dir --->\n<cfset currentTemplate = getCurrentTemplatePath()>\n<cfset currentDir = getDirectoryFromPath(currentTemplate)>\n<cfset tempDir = getTempDirectory()>\n\n<cfoutput>\n    <h3>Paths</h3>\n    <p><strong>Template:</strong> #currentTemplate#</p>\n    <p><strong>Template dir:</strong> #currentDir#</p>\n    <p><strong>Temp dir:</strong> #tempDir#</p>\n</cfoutput>',
+                            script: '<!--- CF 2021+ - Paths and Temp Dir --->\n<cfscript>\n    currentTemplate = getCurrentTemplatePath();\n    currentDir = getDirectoryFromPath(currentTemplate);\n    tempDir = getTempDirectory();\n</cfscript>\n\n<cfoutput>\n    <h3>Paths</h3>\n    <p><strong>Template:</strong> #currentTemplate#</p>\n    <p><strong>Template dir:</strong> #currentDir#</p>\n    <p><strong>Temp dir:</strong> #tempDir#</p>\n</cfoutput>'
+                        },
+                        codeTitle: 'CF 2021+ - Paths and Temp Dir'
+                    }
+                ],
+                tip: 'If you need to create downloadable demo files, write them to the same folder as the running sample file (via getDirectoryFromPath(getCurrentTemplatePath())).'
+            },
+            {
+                title: '2. Reading, Writing, and Appending Files',
+                content: 'ColdFusion provides both tag-based and function-based APIs for file operations. Use whichever fits your code style; the key is to be consistent and to handle encoding explicitly when needed.',
+                sections: [
+                    {
+                        title: 'Write + append + read (tag and script)',
+                        content: 'This example writes a new text file to the server temp directory, appends a second line, then reads it back.',
+                        code: {
+                            tag: '<!--- CF 2021+ - Read Write Append (tag) --->\n<cfset tempDir = getTempDirectory()>\n<cfset filePath = tempDir & "cf-training-" & createUUID() & ".txt">\n\n<cffile action="write" file="#filePath#" output="Line 1" charset="utf-8" addNewLine="yes">\n<cffile action="append" file="#filePath#" output="Line 2" charset="utf-8" addNewLine="yes">\n<cffile action="read" file="#filePath#" variable="fileContents" charset="utf-8">\n\n<cfoutput>\n    <h3>File I/O</h3>\n    <p><strong>File path:</strong> #filePath#</p>\n    <pre>#encodeForHTML(fileContents)#</pre>\n</cfoutput>',
+                            script: '<!--- CF 2021+ - Read Write Append (script) --->\n<cfscript>\n    tempDir = getTempDirectory();\n    filePath = tempDir & "cf-training-" & createUUID() & ".txt";\n\n    fileWrite(filePath, "Line 1", "utf-8");\n    fileAppend(filePath, "Line 2", "utf-8", true);\n\n    fileContents = fileRead(filePath, "utf-8");\n</cfscript>\n\n<cfoutput>\n    <h3>File I/O</h3>\n    <p><strong>File path:</strong> #filePath#</p>\n    <pre>#encodeForHTML(fileContents)#</pre>\n</cfoutput>'
+                        },
+                        codeTitle: 'CF 2021+ - Read Write Append'
+                    },
+                    {
+                        title: 'Practical guidance',
+                        list: [
+                            '<strong>Prefer UTF-8:</strong> For text files, specify <code>charset="utf-8"</code> (tag) or pass <code>"utf-8"</code> (functions) unless you have a strong reason not to.',
+                            '<strong>Don\'t read huge files into memory:</strong> <code>cffile action="read"</code> reads the entire file into a variable; for large logs, consider file objects via <code>fileOpen()</code> + <code>fileRead()</code> buffers.',
+                            '<strong>Clean up transient files:</strong> If you generate a lot of temp files, delete them after you’re done (or use a scheduled cleanup).'
+                        ]
+                    },
+                    {
+                        title: 'Documentation References',
+                        list: [
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-f/cffile-action-read.html" target="_blank">Adobe: cffile action=&quot;read&quot;</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-f/cffile-action-write.html" target="_blank">Adobe: cffile action=&quot;write&quot;</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-f/cffile-action-append.html" target="_blank">Adobe: cffile action=&quot;append&quot;</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-e-g/fileread.html" target="_blank">Adobe: fileRead()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-e-g/filewrite.html" target="_blank">Adobe: fileWrite()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-e-g/fileappend.html" target="_blank">Adobe: fileAppend()</a>'
+                        ]
+                    }
+                ],
+                tip: 'For logs, prefer append and include timestamps; for exports (CSV/JSON), write the full content in one shot.'
+            },
+            {
+                title: '3. Directory Operations and Listings',
+                content: 'Directory operations are the foundation for uploads, exports, and batch processing. ColdFusion supports directory operations via <code>cfdirectory</code> and via functions like <code>directoryCreate()</code> and <code>directoryList()</code>.',
+                sections: [
+                    {
+                        title: 'Create a directory, write files, then list it',
+                        content: 'This example creates a folder in the server temp directory, writes two files into it, and lists the contents. It also demonstrates cleanup.',
+                        code: {
+                            tag: '<!--- CF 2021+ - Directory List Create (tag) --->\n<cfset sep = createObject("java","java.io.File").separator>\n<cfset baseDir = getTempDirectory()>\n<cfset workDir = baseDir & "cf-training-dir-" & createUUID()>\n\n<cfdirectory action="create" directory="#workDir#">\n\n<cfset file1 = workDir & sep & "a.txt">\n<cfset file2 = workDir & sep & "b.txt">\n\n<cffile action="write" file="#file1#" output="A" charset="utf-8">\n<cffile action="write" file="#file2#" output="B" charset="utf-8">\n\n<cfdirectory action="list" directory="#workDir#" name="qFiles">\n\n<cfoutput>\n    <h3>Directory listing</h3>\n    <p><strong>Directory:</strong> #workDir#</p>\n    <ul>\n        <cfloop query="qFiles">\n            <li>#name# (#type#)</li>\n        </cfloop>\n    </ul>\n</cfoutput>\n\n<!--- Cleanup (optional) --->\n<cfset directoryDelete(workDir, true)>',
+                            script: '<!--- CF 2021+ - Directory List Create (script) --->\n<cfscript>\n    sep = createObject("java","java.io.File").separator;\n    baseDir = getTempDirectory();\n    workDir = baseDir & "cf-training-dir-" & createUUID();\n\n    directoryCreate(workDir);\n\n    file1 = workDir & sep & "a.txt";\n    file2 = workDir & sep & "b.txt";\n    fileWrite(file1, "A", "utf-8");\n    fileWrite(file2, "B", "utf-8");\n\n    qFiles = directoryList(workDir, false, "query");\n</cfscript>\n\n<cfoutput>\n    <h3>Directory listing</h3>\n    <p><strong>Directory:</strong> #workDir#</p>\n    <ul>\n        <cfloop query="qFiles">\n            <li>#name# (#type#)</li>\n        </cfloop>\n    </ul>\n</cfoutput>\n\n<cfscript>\n    // Cleanup (optional)\n    directoryDelete(workDir, true);\n</cfscript>'
+                        },
+                        codeTitle: 'CF 2021+ - Directory List Create'
+                    },
+                    {
+                        title: 'Documentation References',
+                        list: [
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-d-e/cfdirectory.html" target="_blank">Adobe: cfdirectory</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-c-d/directorycreate.html" target="_blank">Adobe: directoryCreate()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-c-d/directorydelete.html" target="_blank">Adobe: directoryDelete()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-c-d/directorylist.html" target="_blank">Adobe: directoryList()</a>'
+                        ]
+                    }
+                ],
+                tip: 'For “list + filter + process” batch jobs, prefer <code>directoryList(..., listInfo="query")</code> so you can sort/filter by columns (name, size, dateLastModified, etc.).'
+            },
+            {
+                title: '4. Secure File Uploads',
+                content: 'File uploads are one of the most common security risk areas in web applications. Always validate size, extension, and type; store uploads outside the web root; and never execute uploaded content.',
+                sections: [
+                    {
+                        title: 'Secure upload form + handler (script)',
+                        content: 'This example uses <code>fileUpload()</code> to upload a file to a local <code>uploads/</code> folder next to the running template. It restricts allowed extensions and demonstrates post-upload validation.',
+                        code: {
+                            tag: '<!--- CF 2021+ - Secure File Upload (tag) --->\n<form method="post" enctype="multipart/form-data">\n    <p><input type="file" name="fileInput" required></p>\n    <p><button type="submit">Upload</button></p>\n</form>\n\n<cfif structKeyExists(form, "fileInput")>\n    <cfset sep = createObject(\"java\",\"java.io.File\").separator>\n    <cfset uploadDir = getDirectoryFromPath(getCurrentTemplatePath()) & \"uploads\">\n    <cfif NOT directoryExists(uploadDir)>\n        <cfset directoryCreate(uploadDir)>\n    </cfif>\n\n    <cftry>\n        <cffile\n            action=\"upload\"\n            fileField=\"fileInput\"\n            destination=\"#uploadDir#\"\n            nameConflict=\"makeUnique\"\n            strict=\"true\"\n            allowedExtensions=\".jpg,.jpeg,.png,.pdf\"\n            result=\"uploadResult\">\n\n        <!--- Validate extension after upload (defense-in-depth) --->\n        <cfif NOT listFindNoCase(\"jpg,jpeg,png,pdf\", uploadResult.serverFileExt)>\n            <cffile action=\"delete\" file=\"#uploadResult.serverDirectory##sep##uploadResult.serverFile#\">\n            <cfthrow message=\"Invalid file type.\">\n        </cfif>\n\n        <cfoutput>\n            <p><strong>Uploaded:</strong> #encodeForHTML(uploadResult.serverFile)# (#numberFormat(uploadResult.fileSize/1024, \"0.0\")# KB)</p>\n        </cfoutput>\n\n        <cfcatch type=\"any\">\n            <cfoutput><p><strong>Upload failed:</strong> #encodeForHTML(cfcatch.message)#</p></cfoutput>\n        </cfcatch>\n    </cftry>\n</cfif>',
+                            script: `<!--- CF 2021+ - Secure File Upload (script) --->
+<form method="post" enctype="multipart/form-data">
+    <p><input type="file" name="fileInput" required></p>
+    <p><button type="submit">Upload</button></p>
+</form>
+
+<cfscript>
+if (structKeyExists(form, "fileInput")) {
+    sep = createObject("java","java.io.File").separator;
+    uploadDir = getDirectoryFromPath(getCurrentTemplatePath()) & "uploads";
+    if (!directoryExists(uploadDir)) {
+        directoryCreate(uploadDir);
+    }
+
+    try {
+        // Use positional args for compatibility across doc naming (accept/nameConflict vs mimeType/onConflict)
+        uploadedFile = fileUpload(
+            uploadDir,
+            "fileInput",
+            "*",
+            "makeUnique",
+            true,
+            ".jpg,.jpeg,.png,.pdf"
+        );
+
+        // Defense-in-depth: validate extension after upload (MIME types can be spoofed)
+        if (!listFindNoCase("jpg,jpeg,png,pdf", uploadedFile.serverFileExt)) {
+            badPath = uploadedFile.serverDirectory & sep & uploadedFile.serverFile;
+            if (fileExists(badPath)) {
+                fileDelete(badPath);
+            }
+            throw("Invalid file type.");
+        }
+
+        writeOutput("<p><strong>Uploaded:</strong> " & encodeForHTML(uploadedFile.serverFile) & " (" & numberFormat(uploadedFile.fileSize/1024, "0.0") & " KB)</p>");
+    } catch (any e) {
+        writeOutput("<p><strong>Upload failed:</strong> " & encodeForHTML(e.message) & "</p>");
+    }
+}
+</cfscript>`
+                        },
+                        codeTitle: 'CF 2021+ - Secure File Upload'
+                    },
+                    {
+                        title: 'Security checklist',
+                        list: [
+                            '<strong>Whitelist extensions:</strong> Use <code>allowedExtensions</code> and validate <code>serverFileExt</code> after upload.',
+                            '<strong>Enforce size limits:</strong> Check <code>fileSize</code> and delete oversized uploads.',
+                            '<strong>Store safely:</strong> Put uploads outside the web root when possible; never place user uploads in executable directories.',
+                            '<strong>Rename uploaded files:</strong> Use UUID-based names and store the original name separately (metadata).'
+                        ],
+                        tip: 'Even with strict checks, treat uploaded files as untrusted forever.'
+                    },
+                    {
+                        title: 'Documentation References',
+                        list: [
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-e-g/fileupload.html" target="_blank">Adobe: fileUpload()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-f/cffile-action-upload.html" target="_blank">Adobe: cffile action=&quot;upload&quot;</a>'
+                        ]
+                    }
+                ]
+            },
+            {
+                title: '5. PDFs, Spreadsheets, and Images',
+                content: 'ColdFusion includes built-in features for generating PDFs, working with spreadsheets, and manipulating images. These capabilities are commonly used for reporting, exports, and user-generated content.',
+                sections: [
+                    {
+                        title: 'Generate a PDF with cfdocument',
+                        content: 'This example writes a PDF to the same directory as the running template so you can open it in the browser.',
+                        code: {
+                            tag: '<!--- CF 2021+ - Generate PDF --->\n<cfset outDir = getDirectoryFromPath(getCurrentTemplatePath())>\n<cfset pdfName = \"demo-\" & createUUID() & \".pdf\">\n<cfset pdfPath = outDir & pdfName>\n\n<cfdocument format=\"pdf\" filename=\"#pdfPath#\" overwrite=\"yes\">\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <title>ColdFusion PDF Demo</title>\n</head>\n<body>\n    <h1>ColdFusion PDF Demo</h1>\n    <p>Generated at: <strong>#dateTimeFormat(now(), \"yyyy-mm-dd HH:nn:ss\")#</strong></p>\n    <p>This PDF was generated by <code>&lt;cfdocument&gt;</code>.</p>\n</body>\n</html>\n</cfdocument>\n\n<cfoutput>\n    <p><a href=\"#pdfName#\" target=\"_blank\">Open generated PDF</a></p>\n</cfoutput>',
+                            script: '<!--- CF 2021+ - Generate PDF --->\n<cfscript>\n    outDir = getDirectoryFromPath(getCurrentTemplatePath());\n    pdfName = \"demo-\" & createUUID() & \".pdf\";\n    pdfPath = outDir & pdfName;\n</cfscript>\n\n<cfdocument format=\"pdf\" filename=\"#pdfPath#\" overwrite=\"yes\">\n<html>\n<head>\n    <meta charset=\"utf-8\">\n    <title>ColdFusion PDF Demo</title>\n</head>\n<body>\n    <h1>ColdFusion PDF Demo</h1>\n    <p>Generated at: <strong>#dateTimeFormat(now(), \"yyyy-mm-dd HH:nn:ss\")#</strong></p>\n    <p>This PDF was generated by <code>&lt;cfdocument&gt;</code>.</p>\n</body>\n</html>\n</cfdocument>\n\n<cfoutput>\n    <p><a href=\"#pdfName#\" target=\"_blank\">Open generated PDF</a></p>\n</cfoutput>'
+                        },
+                        codeTitle: 'CF 2021+ - Generate PDF'
+                    },
+                    {
+                        title: 'Create and write a spreadsheet',
+                        content: 'This example creates a simple spreadsheet in memory, writes it to disk as an .xlsx file, and provides a link to open/download it.',
+                        code: {
+                            tag: '<!--- CF 2021+ - Write Spreadsheet --->\n<cfset outDir = getDirectoryFromPath(getCurrentTemplatePath())>\n<cfset xlsxName = \"demo-\" & createUUID() & \".xlsx\">\n<cfset xlsxPath = outDir & xlsxName>\n\n<cfset sheet = spreadsheetNew(\"Expenses\", true)>\n<cfset spreadsheetSetCellValue(sheet, \"Item\", 1, 1)>\n<cfset spreadsheetSetCellValue(sheet, \"Amount\", 1, 2)>\n<cfset spreadsheetSetCellValue(sheet, \"Coffee\", 2, 1)>\n<cfset spreadsheetSetCellValue(sheet, \"4.50\", 2, 2)>\n\n<cfscript>\n    spreadsheetWrite(spreadsheet=sheet, filePath=xlsxPath, overwrite=true);\n</cfscript>\n\n<cfoutput>\n    <p><a href=\"#xlsxName#\" target=\"_blank\">Open generated spreadsheet</a></p>\n</cfoutput>',
+                            script: '<!--- CF 2021+ - Write Spreadsheet --->\n<cfscript>\n    outDir = getDirectoryFromPath(getCurrentTemplatePath());\n    xlsxName = \"demo-\" & createUUID() & \".xlsx\";\n    xlsxPath = outDir & xlsxName;\n\n    sheet = spreadsheetNew(\"Expenses\", true);\n    spreadsheetSetCellValue(sheet, \"Item\", 1, 1);\n    spreadsheetSetCellValue(sheet, \"Amount\", 1, 2);\n    spreadsheetSetCellValue(sheet, \"Coffee\", 2, 1);\n    spreadsheetSetCellValue(sheet, \"4.50\", 2, 2);\n\n    spreadsheetWrite(spreadsheet=sheet, filePath=xlsxPath, overwrite=true);\n</cfscript>\n\n<cfoutput>\n    <p><a href=\"#xlsxName#\" target=\"_blank\">Open generated spreadsheet</a></p>\n</cfoutput>'
+                        },
+                        codeTitle: 'CF 2021+ - Write Spreadsheet'
+                    },
+                    {
+                        title: 'Create, resize, and write an image',
+                        content: 'This example creates a blank image, resizes it, writes it to disk, and displays it on the page.',
+                        code: {
+                            tag: '<!--- CF 2021+ - Resize Image --->\n<cfset outDir = getDirectoryFromPath(getCurrentTemplatePath())>\n<cfset imgName = \"demo-\" & createUUID() & \".png\">\n<cfset imgPath = outDir & imgName>\n\n<cfset img = imageNew(\"\", 400, 200, \"rgb\", \"##1473E6\")>\n<cfset imageResize(img, 200, 100, \"highQuality\", 2)>\n<cfset imageWrite(img, imgPath, 1, true)>\n\n<cfoutput>\n    <p><img src=\"#imgName#\" alt=\"Generated image\" style=\"max-width:100%; height:auto;\"></p>\n</cfoutput>',
+                            script: '<!--- CF 2021+ - Resize Image --->\n<cfscript>\n    outDir = getDirectoryFromPath(getCurrentTemplatePath());\n    imgName = \"demo-\" & createUUID() & \".png\";\n    imgPath = outDir & imgName;\n\n    img = imageNew(\"\", 400, 200, \"rgb\", \"##1473E6\");\n    imageResize(img, 200, 100, \"highQuality\", 2);\n    imageWrite(img, imgPath, 1, true);\n</cfscript>\n\n<cfoutput>\n    <p><img src=\"#imgName#\" alt=\"Generated image\" style=\"max-width:100%; height:auto;\"></p>\n</cfoutput>'
+                        },
+                        codeTitle: 'CF 2021+ - Resize Image'
+                    },
+                    {
+                        title: 'Documentation References',
+                        list: [
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-d-e/cfdocument.html" target="_blank">Adobe: cfdocument</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-s/spreadsheetnew.html" target="_blank">Adobe: spreadsheetNew()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-s/spreadsheetwrite.html" target="_blank">Adobe: spreadsheetWrite()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-i/cfimage.html" target="_blank">Adobe: cfimage</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-h-im/imagenew.html" target="_blank">Adobe: imageNew()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-h-im/imageresize.html" target="_blank">Adobe: imageResize()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-h-im/imagewrite.html" target="_blank">Adobe: imageWrite()</a>'
+                        ]
+                    }
+                ],
+                tip: 'If your goal is “modern HTML/CSS → PDF”, consider newer HTML-to-PDF options in newer CF versions; <code>cfdocument</code> is great for many use cases but doesn’t support all modern web features.'
+            }
+        ]
+    };
+}
 function getModule5Data() { return { title: 'Cloud Storage Integration', description: 'S3, Azure Blob, and Google Cloud Storage', versions: ['2023', '2025'], lessons: [] }; }
 function getModule6Data() { return { title: 'Security Fundamentals', description: 'Input validation, output encoding, and authentication', versions: ['2021', '2023', '2025'], lessons: [] }; }
 function getModule7Data() { return { title: 'Object-Oriented Programming', description: 'CFCs, Inheritance, and Modern OOP', versions: ['2021', '2023', '2025'], lessons: [] }; }

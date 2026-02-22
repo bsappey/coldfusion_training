@@ -46,9 +46,14 @@ const loadQuiz = (moduleId) => {
     const moduleLink = document.getElementById('breadcrumbModuleLink');
     if (moduleLink) {
         moduleLink.href = `modules/module-${moduleId}.cfm`;
-        const modules = getModulesData();
-        const module = modules.find(m => m.id === moduleId);
-        moduleLink.textContent = module ? `Module ${moduleId}: ${module.title}` : `Module ${moduleId}`;
+        if (typeof getModulesData === 'function') {
+            const modules = getModulesData();
+            const module = modules.find(m => m.id === moduleId);
+            moduleLink.textContent = module ? `Module ${moduleId}: ${module.title}` : `Module ${moduleId}`;
+        } else {
+            console.error('getModulesData not found. modules-data.js may not be loaded.');
+            moduleLink.textContent = `Module ${moduleId}`;
+        }
     }
     
     // Update back to module buttons (there may be multiple)

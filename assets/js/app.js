@@ -19,6 +19,7 @@ const initializeApp = () => {
     const modulesContainer = document.getElementById('modulesContainer');
     if (modulesContainer) {
         loadModules();
+        // updateProgress() depends on getModulesData() being available
         updateProgress();
     }
     
@@ -42,6 +43,53 @@ const initializeApp = () => {
 };
 
 /**
+ * Dynamically load a script (once) and wait for it.
+ */
+const loadScript = (src) => new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+        // If it already exists, assume it has loaded or will load soon.
+        // (We can't reliably read its load state across browsers.)
+        setTimeout(resolve, 0);
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.head.appendChild(script);
+});
+
+/**
+ * Ensure modules-data.js is loaded (handles moved deployments).
+ */
+const ensureModulesDataLoaded = async () => {
+    if (typeof getModulesData === 'function') return true;
+
+    // Try a few common base paths (root, current dir, parent dir)
+    const candidates = [
+        'assets/js/modules-data.js',
+        './assets/js/modules-data.js',
+        '../assets/js/modules-data.js',
+        '/assets/js/modules-data.js'
+    ];
+
+    for (const candidate of candidates) {
+        try {
+            const resolved = new URL(candidate, window.location.href).toString();
+            await loadScript(resolved);
+            if (typeof getModulesData === 'function') return true;
+        } catch (e) {
+            // keep trying
+        }
+    }
+
+    return typeof getModulesData === 'function';
+};
+
+/**
  * Load and display training modules
  */
 const loadModules = () => {
@@ -53,8 +101,28 @@ const loadModules = () => {
 
     // Ensure getModulesData is available
     if (typeof getModulesData !== 'function') {
-        console.error('getModulesData function not found. Make sure modules-data.js is loaded.');
-        container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Error loading modules. Please refresh the page.</div></div>';
+        console.error('getModulesData function not found. modules-data.js may not be loaded or failed to parse.');
+        container.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <div class="fw-semibold mb-1">Error loading modules.</div>
+                    <div class="small">
+                        The page couldn’t find <code>getModulesData()</code>. This usually means <code>assets/js/modules-data.js</code> didn’t load (404/path issue) or failed to parse.
+                        <br>
+                        Try opening <a href="${new URL('assets/js/modules-data.js', window.location.href)}" target="_blank" rel="noopener">modules-data.js</a> directly.
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Attempt auto-recovery for common deployment path changes
+        (async () => {
+            const ok = await ensureModulesDataLoaded();
+            if (ok) {
+                loadModules();
+                updateProgress();
+            }
+        })();
         return;
     }
 
@@ -139,6 +207,10 @@ const getModuleBadgeClass = (index) => {
  * Update progress display (without percentage grids)
  */
 const updateProgress = () => {
+    if (typeof getModulesData !== 'function') {
+        console.warn('updateProgress skipped: getModulesData not available (modules-data.js not loaded).');
+        return;
+    }
     const modules = getModulesData();
     const totalModules = modules.length;
     let completedModules = 0;

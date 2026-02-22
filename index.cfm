@@ -251,6 +251,7 @@
     <!-- Prism.js for syntax highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     <script>
         // Add ColdFusion language support for Prism.js with enhanced script syntax
@@ -260,7 +261,8 @@
             Prism.languages.coldfusion = Prism.languages.extend('markup', {
                 'comment': [
                     {
-                        pattern: /<!---[\s\S]*?--->/,
+                        // Avoid literal CF comment markers (<!--- --->) inside a .cfm template
+                        pattern: /<\!---[\s\S]*?--\->/,
                         greedy: true
                     },
                     {
@@ -312,7 +314,8 @@
             // Fallback if markup isn't loaded
             Prism.languages.coldfusion = {
                 'comment': [
-                    /<!---[\s\S]*?--->/,
+                    // Avoid literal CF comment markers (<!--- --->) inside a .cfm template
+                    /<\!---[\s\S]*?--\->/,
                     /\/\/.*/,
                     /\/\*[\s\S]*?\*\//
                 ],

@@ -8,6 +8,51 @@ let lessons = [];
 let isManualNavigation = false; // Flag to prevent scroll spy during manual navigation
 let currentActiveNavItem = null; // Track the currently active nav item for scroll spy
 
+/**
+ * Dynamically load a script (once) and wait for it.
+ * This helps when the app is deployed under a different webroot path.
+ */
+const loadScript = (src) => new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+        setTimeout(resolve, 0);
+        return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.head.appendChild(script);
+});
+
+/**
+ * Ensure modules-data.js is loaded so getModuleData() exists.
+ */
+const ensureModulesDataLoaded = async () => {
+    if (typeof getModuleData === 'function') return true;
+
+    const candidates = [
+        '../assets/js/modules-data.js', // normal for /modules/ pages
+        'assets/js/modules-data.js',
+        './assets/js/modules-data.js',
+        '/assets/js/modules-data.js'
+    ];
+
+    for (const candidate of candidates) {
+        try {
+            const resolved = new URL(candidate, window.location.href).toString();
+            await loadScript(resolved);
+            if (typeof getModuleData === 'function') return true;
+        } catch (e) {
+            // keep trying
+        }
+    }
+
+    return typeof getModuleData === 'function';
+};
+
 // Initialize module page with performance optimization
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
@@ -36,7 +81,25 @@ const initModulePage = () => {
 /**
  * Load module content
  */
-const loadModule = (moduleId) => {
+const loadModule = async (moduleId) => {
+    if (typeof getModuleData !== 'function') {
+        const ok = await ensureModulesDataLoaded();
+        if (!ok) {
+            const container = document.getElementById('lessonsContainer');
+            if (container) {
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <div class="fw-semibold mb-1">Error loading module data.</div>
+                        <div class="small">
+                            The page couldn’t find <code>getModuleData()</code>. This usually means <code>modules-data.js</code> didn’t load (path/404) or failed to parse.
+                        </div>
+                    </div>
+                `;
+            }
+            return;
+        }
+    }
+
     const moduleData = getModuleData(moduleId);
     
     if (!moduleData) {

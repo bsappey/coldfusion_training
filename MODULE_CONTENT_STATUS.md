@@ -8,7 +8,7 @@ Use this with **@README.md** when resuming to see which modules need lessons. Co
 | 1 | Language Fundamentals | Has content | — |
 | 2 | Web & Application Structure | Has content | — |
 | 3 | Data Connectivity & Manipulation | Has content | — |
-| **4** | File & Document Operations | **Empty** | Add lessons |
+| 4 | File & Document Operations | Has content | — |
 | **5** | Cloud Storage Integration | **Empty** | Add lessons |
 | **6** | Security Fundamentals | **Empty** | Add lessons |
 | **7** | Object-Oriented Programming | **Empty** | Add lessons |

@@ -312,6 +312,7 @@ The platform is designed to support instructor-led training:
 ### Code Not Highlighting
 
 - Ensure Prism.js is loaded
+- Ensure Prism dependencies are loaded in order: `prism-core` → `prism-markup` → `prism-clike` → `prism-javascript`
 - Check that code blocks use `class="language-coldfusion"`
 - Verify the ColdFusion language definition is included
 
@@ -326,6 +327,15 @@ The platform is designed to support instructor-led training:
 - Check browser console for errors
 - Verify `modules-data.js` is loaded before `module.js`
 - Ensure module ID exists in the data structure
+
+### Error loading modules / `getModulesData()` is not defined
+
+- **Most common cause**: `assets/js/modules-data.js` didn’t load (404/path mismatch). Try opening `assets/js/modules-data.js` directly in your browser.
+- **Next most common cause**: `modules-data.js` loaded but **failed to parse** due to a JavaScript syntax error. The browser console will show the line/column.
+
+### Inline JavaScript breaks on `.cfm` pages
+
+- Avoid including the literal CFML comment markers `<!---` / `--->` inside inline JavaScript in `.cfm` templates (for example inside regex literals). ColdFusion may treat them as comments and strip them, corrupting the script.
 
 ## AI Agent Usage
 
