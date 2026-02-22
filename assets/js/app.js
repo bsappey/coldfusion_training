@@ -45,7 +45,11 @@ const initializeApp = () => {
 /**
  * Dynamically load a script (once) and wait for it.
  */
-const loadScript = (src) => new Promise((resolve, reject) => {
+// Shared namespace for cross-page helpers (prevents const redeclaration across app.js/module.js)
+window.CFTraining = window.CFTraining || {};
+var CFTraining = window.CFTraining;
+
+CFTraining.loadScript = CFTraining.loadScript || ((src) => new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${src}"]`);
     if (existing) {
         // If it already exists, assume it has loaded or will load soon.
@@ -60,13 +64,14 @@ const loadScript = (src) => new Promise((resolve, reject) => {
     script.onload = () => resolve();
     script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
     document.head.appendChild(script);
-});
+}));
 
 /**
  * Ensure modules-data.js is loaded (handles moved deployments).
  */
-const ensureModulesDataLoaded = async () => {
-    if (typeof getModulesData === 'function') return true;
+CFTraining.ensureModulesDataLoaded = CFTraining.ensureModulesDataLoaded || (async () => {
+    // modules-data.js defines both getModulesData() and getModuleData()
+    if (typeof getModulesData === 'function' || typeof getModuleData === 'function') return true;
 
     // Try a few common base paths (root, current dir, parent dir)
     const candidates = [
@@ -79,15 +84,15 @@ const ensureModulesDataLoaded = async () => {
     for (const candidate of candidates) {
         try {
             const resolved = new URL(candidate, window.location.href).toString();
-            await loadScript(resolved);
-            if (typeof getModulesData === 'function') return true;
+            await CFTraining.loadScript(resolved);
+            if (typeof getModulesData === 'function' || typeof getModuleData === 'function') return true;
         } catch (e) {
             // keep trying
         }
     }
 
-    return typeof getModulesData === 'function';
-};
+    return typeof getModulesData === 'function' || typeof getModuleData === 'function';
+});
 
 /**
  * Load and display training modules
@@ -117,7 +122,7 @@ const loadModules = () => {
 
         // Attempt auto-recovery for common deployment path changes
         (async () => {
-            const ok = await ensureModulesDataLoaded();
+            const ok = await CFTraining.ensureModulesDataLoaded();
             if (ok) {
                 loadModules();
                 updateProgress();

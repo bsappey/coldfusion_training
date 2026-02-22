@@ -12,7 +12,12 @@ let currentActiveNavItem = null; // Track the currently active nav item for scro
  * Dynamically load a script (once) and wait for it.
  * This helps when the app is deployed under a different webroot path.
  */
-const loadScript = (src) => new Promise((resolve, reject) => {
+// Shared namespace for cross-page helpers (prevents const redeclaration across app.js/module.js)
+window.CFTraining = window.CFTraining || {};
+var CFTraining = window.CFTraining;
+
+// Define helpers if app.js isn't loaded for some reason
+CFTraining.loadScript = CFTraining.loadScript || ((src) => new Promise((resolve, reject) => {
     const existing = document.querySelector(`script[src="${src}"]`);
     if (existing) {
         setTimeout(resolve, 0);
@@ -25,13 +30,10 @@ const loadScript = (src) => new Promise((resolve, reject) => {
     script.onload = () => resolve();
     script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
     document.head.appendChild(script);
-});
+}));
 
-/**
- * Ensure modules-data.js is loaded so getModuleData() exists.
- */
-const ensureModulesDataLoaded = async () => {
-    if (typeof getModuleData === 'function') return true;
+CFTraining.ensureModulesDataLoaded = CFTraining.ensureModulesDataLoaded || (async () => {
+    if (typeof getModulesData === 'function' || typeof getModuleData === 'function') return true;
 
     const candidates = [
         '../assets/js/modules-data.js', // normal for /modules/ pages
@@ -43,15 +45,15 @@ const ensureModulesDataLoaded = async () => {
     for (const candidate of candidates) {
         try {
             const resolved = new URL(candidate, window.location.href).toString();
-            await loadScript(resolved);
-            if (typeof getModuleData === 'function') return true;
+            await CFTraining.loadScript(resolved);
+            if (typeof getModulesData === 'function' || typeof getModuleData === 'function') return true;
         } catch (e) {
             // keep trying
         }
     }
 
-    return typeof getModuleData === 'function';
-};
+    return typeof getModulesData === 'function' || typeof getModuleData === 'function';
+});
 
 // Initialize module page with performance optimization
 if (document.readyState === 'loading') {
@@ -83,7 +85,7 @@ const initModulePage = () => {
  */
 const loadModule = async (moduleId) => {
     if (typeof getModuleData !== 'function') {
-        const ok = await ensureModulesDataLoaded();
+        const ok = await CFTraining.ensureModulesDataLoaded();
         if (!ok) {
             const container = document.getElementById('lessonsContainer');
             if (container) {
