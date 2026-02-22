@@ -8,6 +8,17 @@ A comprehensive, modern training platform for Adobe ColdFusion covering versions
 
 **Use this README when resuming work:** e.g. open it or reference `@README.md` in Cursor so the AI has project context and you use fewer tokens.
 
+- **Latest session notes (2026-02-22)**:
+  - **CF 2025 deltas made explicit in completed modules** (and verified against Adobe docs): updated `assets/js/modules-data.js` to add/repair 2025 callouts and examples.
+  - **Key updates**:
+    - Module 0: added Adobe links for **CF 2025 “What’s New”** and **NUL/FRL licensing**
+    - Module 1: added **CF 2025 practical language deltas** (trailing commas, multi-catch, `duplicate(..., deepCopy)`)
+    - Module 2: added **CF 2025 CSP nonce** section (`enableCspNonceForScript` + `getCSPNonce(true)`)
+    - Module 3: added **CF 2025** `deserializeJSON(json, "query")` callout
+    - Module 4: added **CF 2025** streaming spreadsheet + CSV functions section
+    - Module 8: fixed CSV example to match Adobe’s real CF 2025 function signatures; added charting (SVG + `cfchartset`)
+  - **Where to resume next**: continue filling Modules **5–7**, **10–12**, and then expand AI track **13–23** from Adobe CF 2025.07 Alpha Refresh docs.
+
 - **What this is:** ColdFusion training site. **24 modules (0–23).** Modules 0–12 = core CF; **13–23 = AI track** (Adobe 2025.07 Alpha Refresh, chapters 22–32). Each module has lessons; content is in JS, rendered by CF pages.
 - **Single source of truth for content:** `assets/js/modules-data.js`  
   - `getModulesData()` → array of `{ id, title, subtitle, description, icon, versions, estimatedTime }`. **Order in this array = display order.**  
@@ -467,4 +478,4 @@ Module 13 covers ColdFusion 2025 AI features (via feature update). Content inclu
 
 **Built with ❤️ for learning ColdFusion**
 
-*Last Updated: January 2025*
+*Last Updated: February 2026*

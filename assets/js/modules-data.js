@@ -444,6 +444,8 @@ function getModule0Data() {
                                 list: [
                                     '<a href="https://helpx.adobe.com/coldfusion/getting-started.html" target="_blank">Adobe ColdFusion - Getting Started</a>',
                                     '<a href="https://helpx.adobe.com/coldfusion/installing-coldfusion.html" target="_blank">ColdFusion Installation Guide</a>',
+                                    '<a href="https://helpx.adobe.com/coldfusion/using/whats-new.html" target="_blank">Adobe: What\'s new in ColdFusion (2025 release)</a>',
+                                    '<a href="https://helpx.adobe.com/coldfusion/using/coldfusion-new-licensing-activation.html" target="_blank">Adobe: Named User License (NUL) and Feature Restricted Licensing (FRL)</a>',
                                     '<a href="https://commandbox.ortusbooks.com/" target="_blank">CommandBox Documentation</a>',
                                     '<a href="https://cfdocs.org/" target="_blank">CFDocs.org - ColdFusion Function Reference</a>',
                                     '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-by-category.html" target="_blank">CFML Tag Reference</a>'
@@ -672,6 +674,46 @@ function getModule1Data() {
                             '<strong>Version Considerations:</strong> Understanding differences and gotchas between ColdFusion 2021, 2023, and 2025'
                         ],
                         tip: 'Reference: <a href="https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-variables-and-data-types.html" target="_blank">Adobe ColdFusion - Variables and Data Types</a> | <a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-v-w/cfset.html" target="_blank">cfset Tag Reference</a>'
+                    },
+                    {
+                        title: 'ColdFusion 2025: practical language deltas',
+                        versionBadge: '2025',
+                        content: 'Most of this module is “core CFML” and works across versions. ColdFusion 2025 adds some quality-of-life features you\'ll see in modern codebases.',
+                        list: [
+                            '<strong>Trailing commas:</strong> Allowed in arrays/structs and many argument lists — makes diffs cleaner when adding/removing items',
+                            '<strong>Multiple exception types:</strong> Catch multiple exception types in one catch clause using <code>|</code>',
+                            '<strong>duplicate() deepCopy flag:</strong> Optional boolean argument; pass <code>false</code> when you want a shallow clone (child references remain linked)'
+                        ],
+                        code: {
+                            tag: '<!--- N/A for tag; use script --->',
+                            script: `<!--- CF 2025+ language deltas --->
+<cfscript>
+    // 1) Trailing commas
+    nums = [1, 2, 3,];
+    user = { id: 1, name: "Jane", };
+
+    // 2) Multiple exception types in one catch
+    try {
+        // Example: something that might throw expression or database exceptions
+        result = 1 / 0;
+    } catch (expression | database e) {
+        writeOutput("<p>Caught: " & e.type & " - " & e.message & "</p>");
+    }
+
+    // 3) duplicate() deepCopy flag
+    original = { name: "Alice", address: { street: "123 Main St" } };
+    shallow = duplicate(original, false); // keep child references linked
+    deep = duplicate(original, true);     // clone child elements
+
+    original.address.street = "456 Oak St";
+
+    writeOutput("<p>Original: " & original.address.street & "</p>");
+    writeOutput("<p>Shallow (linked): " & shallow.address.street & "</p>");
+    writeOutput("<p>Deep (cloned): " & deep.address.street & "</p>");
+</cfscript>`
+                        },
+                        codeTitle: 'CF 2025 language deltas (trailing commas, multi-catch, duplicate deepCopy)',
+                        tip: 'Verified against Adobe: trailing commas + multi-catch (CF 2025 language enhancements); duplicate(object, deepCopy) (CF 2025 optional parameter).'
                     },
                     {
                         title: 'Basic Variable Assignment',
@@ -1144,6 +1186,18 @@ function getModule2Data() {
                         title: 'Basic Application.cfc:',
                         code: '<cfcomponent>\n    <!--- Application Settings --->\n    <cfset this.name = "MyApplication">\n    <cfset this.applicationTimeout = CreateTimeSpan(0, 2, 0, 0)>\n    <cfset this.sessionManagement = true>\n    <cfset this.sessionTimeout = CreateTimeSpan(0, 0, 30, 0)>\n    \n    <!--- Application Start --->\n    <cffunction name="onApplicationStart" returntype="boolean">\n        <cfset Application.initialized = true>\n        <cfset Application.startTime = Now()>\n        <cfreturn true>\n    </cffunction>\n    \n    <!--- Request Start --->\n    <cffunction name="onRequestStart" returntype="boolean">\n        <cfargument name="targetPage" type="string" required="true">\n        <!--- Pre-request logic here --->\n        <cfreturn true>\n    </cffunction>\n    \n    <!--- Request End --->\n    <cffunction name="onRequestEnd" returntype="void">\n        <cfargument name="targetPage" type="string" required="true">\n        <!--- Post-request logic here --->\n    </cffunction>\n</cfcomponent>',
                         codeTitle: 'Application.cfc Structure (CF 2021+)'
+                    },
+                    {
+                        title: 'CF 2025+: CSP nonce support for inline scripts',
+                        versionBadge: '2025',
+                        content: 'If you enable Content-Security-Policy (CSP), inline scripts are typically blocked. ColdFusion 2025 adds a built-in nonce workflow so CFML tags that emit inline JS can be made CSP-compatible.',
+                        list: [
+                            '<strong>Enable per-request nonces:</strong> Set <code>this.enableCspNonceForScript = true</code> in <code>Application.cfc</code>',
+                            '<strong>Add nonce attribute:</strong> Use <code>getCSPNonce()</code> / <code>getCSPNonce(true)</code> on inline <code>&lt;script&gt;</code> blocks'
+                        ],
+                        code: '<!--- Application.cfc (CF 2025+) --->\n<cfcomponent>\n    <cfset this.name = "MyApplication">\n    <cfset this.enableCspNonceForScript = true>\n</cfcomponent>\n\n<!--- Page with inline JS (CF 2025+) --->\n<cfoutput>\n<script type="text/javascript" #getCSPNonce(true)#>\n    console.log("This inline script will be allowed by CSP when nonces match.");\n</script>\n</cfoutput>',
+                        codeTitle: 'CSP nonce with enableCspNonceForScript + getCSPNonce() (CF 2025+)',
+                        tip: 'Verified against Adobe: getCSPNonce() and Application.cfc variable enableCspNonceForScript (ColdFusion 2025 release).'
                     }
                 ]
             },
@@ -1381,6 +1435,27 @@ function getModule3Data() {
                             '<strong>Lists:</strong> String with a delimiter (default comma); use list functions or convert with <code>listToArray</code>'
                         ],
                         tip: 'Verified: CFDocs queryNew, structNew, list functions; Adobe Variables and Data Types.'
+                    },
+                    {
+                        title: 'Deserialize JSON directly to a query',
+                        versionBadge: '2025',
+                        content: 'ColdFusion 2025 adds the ability to return a query from <code>deserializeJSON()</code> by passing <code>"query"</code> as the second argument. This is handy when your JSON is an array of objects and you want query-style column access (and can be faster for large payloads).',
+                        code: {
+                            tag: '<!--- N/A for tag; use script --->',
+                            script: `// CF 2025+ - JSON array of objects → query
+json = '[
+  { "id": 1, "name": "One", "amount": 15 },
+  { "id": 2, "name": "Two", "amount": 18 }
+]';
+
+q = deserializeJSON(json, "query");
+writeDump(q);
+
+// Query-style access:
+writeOutput(q.name[1] & " = " & q.amount[1]);`
+                        },
+                        codeTitle: 'DeserializeJSON(..., "query") (CF 2025+)',
+                        tip: 'Verified against Adobe: DeserializeJSON() (ColdFusion 2025 release adds "query" return type).'
                     },
                     {
                         title: 'Arrays: create and iterate',
@@ -1664,6 +1739,58 @@ if (structKeyExists(form, "fileInput")) {
                         codeTitle: 'CF 2021+ - Write Spreadsheet'
                     },
                     {
+                        title: 'CF 2025+: Streaming spreadsheets + CSV functions',
+                        versionBadge: '2025',
+                        content: 'ColdFusion 2025 adds streaming spreadsheet functions (for large XLSX files) and first-class CSV functions (<code>CSVRead</code>/<code>CSVWrite</code>/<code>CSVProcess</code>). Use these when file sizes get big enough that “load entire file into memory” becomes painful.',
+                        code: {
+                            tag: '<!--- N/A for tag; use script --->',
+                            script: `<!--- CF 2025+ - Streaming spreadsheet + CSV --->
+<cfscript>
+    baseDir = getDirectoryFromPath(getCurrentTemplatePath());
+
+    // 1) Create a streaming spreadsheet (large-file friendly)
+    xlsxName = "streaming-" & createUUID() & ".xlsx";
+    xlsxPath = baseDir & xlsxName;
+
+    ss = streamingSpreadsheetNew("Expenses", 100);
+    spreadsheetSetCellValue(ss, "Item", 1, 1);
+    spreadsheetSetCellValue(ss, "Amount", 1, 2);
+    spreadsheetSetCellValue(ss, "Coffee", 2, 1);
+    spreadsheetSetCellValue(ss, 4.50, 2, 2);
+
+    spreadsheetWrite(ss, xlsxPath, "", true, false);
+
+    // 2) Read it back as a query (without loading everything)
+    q = streamingSpreadsheetRead(xlsxPath, {
+        sheetName: "Expenses",
+        format: "query",
+        headerRow: 1,
+        excludeHeaderRow: true,
+        rows: "1-10"
+    });
+    writeDump(q);
+
+    // 3) Write the query to CSV, then read it back as a query
+    csvName = "export-" & createUUID() & ".csv";
+    csvPath = baseDir & csvName;
+
+    CSVWrite(q, "query", csvPath);
+    q2 = CSVRead(csvPath, "query");
+    writeDump(q2);
+
+    // 4) Clean up streaming spreadsheet temp files when done
+    streamingSpreadsheetCleanup(ss);
+</cfscript>
+
+<cfoutput>
+    <p><a href="#xlsxName#" target="_blank">Open streaming spreadsheet</a></p>
+    <p><a href="#csvName#" target="_blank">Open generated CSV</a></p>
+</cfoutput>`
+                        },
+                        codeTitle: 'CF 2025+ - Streaming Spreadsheet + CSV',
+                        tip: 'Verified against Adobe (ColdFusion 2025 release): streamingSpreadsheetNew/read/cleanup + CSVRead/CSVWrite.'
+                    },
+                    {
                         title: 'Create, resize, and write an image',
                         content: 'This example creates a blank image, resizes it, writes it to disk, and displays it on the page.',
                         code: {
@@ -1678,6 +1805,12 @@ if (structKeyExists(form, "fileInput")) {
                             '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-d-e/cfdocument.html" target="_blank">Adobe: cfdocument</a>',
                             '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-s/spreadsheetnew.html" target="_blank">Adobe: spreadsheetNew()</a>',
                             '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-s/spreadsheetwrite.html" target="_blank">Adobe: spreadsheetWrite()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-s/streamingspreadsheetnew.html" target="_blank">Adobe: streamingSpreadsheetNew()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-s/streamingspreadsheetread.html" target="_blank">Adobe: streamingSpreadsheetRead()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-s/streamingspreadsheetcleanup.html" target="_blank">Adobe: streamingSpreadsheetCleanup()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-c-d/csvread.html" target="_blank">Adobe: CSVRead()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-c-d/csvwrite.html" target="_blank">Adobe: CSVWrite()</a>',
+                            '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-c-d/csvprocess.html" target="_blank">Adobe: CSVProcess()</a>',
                             '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-i/cfimage.html" target="_blank">Adobe: cfimage</a>',
                             '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-h-im/imagenew.html" target="_blank">Adobe: imageNew()</a>',
                             '<a href="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-h-im/imageresize.html" target="_blank">Adobe: imageResize()</a>',
@@ -1720,7 +1853,7 @@ function getModule8Data() {
                         list: [
                             '<strong>ColdFusion 2021:</strong> Foundation release with core modern features',
                             '<strong>ColdFusion 2023:</strong> Major enhancements including property visibility and cloud storage',
-                            '<strong>ColdFusion 2025:</strong> Latest release with interfaces, enhanced JIT, and new licensing model'
+                            '<strong>ColdFusion 2025:</strong> Latest release with new licensing, streaming spreadsheets/CSV functions, and charting enhancements (SVG, cfchartset)'
                         ]
                     }
                 ]
@@ -1781,19 +1914,20 @@ function getModule8Data() {
             },
             {
                 title: 'What\'s New in ColdFusion 2025 (from 2023)',
-                content: 'ColdFusion 2025 introduces interfaces, enhanced language features, new spreadsheet/CSV functions, and a new licensing model. Reference: <a href="https://helpx.adobe.com/coldfusion/using/whats-new.html" target="_blank">Adobe What\'s New Documentation</a>',
+                content: 'ColdFusion 2025 introduces a new licensing model, major spreadsheet/CSV upgrades (including streaming), and charting enhancements (SVG and new charting capabilities). It also adds several language enhancements. Reference: <a href="https://helpx.adobe.com/coldfusion/using/whats-new.html" target="_blank">Adobe What\'s New Documentation</a>',
                 sections: [
                     {
-                        title: 'Language & OOP Enhancements',
+                        title: 'Language Enhancements',
                         versionBadge: '2025',
                         list: [
-                            '<strong>Interface Support:</strong> Define and implement interfaces in CFCs for better abstraction',
                             '<strong>Multiple Exception Handling:</strong> Handle multiple exceptions in a single catch statement using pipes',
                             '<strong>Trailing Commas:</strong> Support for trailing commas in arrays, structs, functions, and parameters',
-                            '<strong>Deep Copy Parameter:</strong> New deepCopy parameter in duplicate() function for cloning child elements'
+                            '<strong>Deep Copy Parameter:</strong> Optional deepCopy parameter in duplicate()',
+                            '<strong>CSP nonce support:</strong> <code>getCSPNonce()</code> + <code>enableCspNonceForScript</code> for CSP compatibility in tags that emit inline JS',
+                            '<strong>Destructuring enhancements:</strong> Expanded destructuring support (including in function parameters)'
                         ],
-                        code: '<!--- Interface Support (CF 2025+) --->\n<!--- Define Interface --->\n<cfinterface>\n    <cffunction name="calculate" returntype="numeric">\n        <cfargument name="value" type="numeric" required="true">\n    </cffunction>\n</cfinterface>\n\n<!--- Implement Interface --->\n<cfcomponent implements="ICalculator">\n    <cffunction name="calculate" returntype="numeric">\n        <cfargument name="value" type="numeric" required="true">\n        <cfreturn value * 2>\n    </cffunction>\n</cfcomponent>',
-                        codeTitle: 'Interface Support (CF 2025+)'
+                        code: '<!--- Trailing commas (CF 2025+) --->\n<cfscript>\n    // Arrays\n    nums = [1, 2, 3,];\n\n    // Structs\n    user = {\n        id: 1,\n        name: \"Jane\",\n    };\n\n    writeDump({ nums: nums, user: user });\n</cfscript>',
+                        codeTitle: 'Trailing Commas (CF 2025+)'
                     },
                     {
                         title: 'Multiple Exception Handling',
@@ -1809,8 +1943,50 @@ function getModule8Data() {
                             '<strong>30+ New Spreadsheet Methods:</strong> Enhanced cell and sheet property management',
                             '<strong>CSV Functions:</strong> CSVRead(), CSVWrite(), CSVProcess() for CSV file operations'
                         ],
-                        code: '<!--- New CSV Functions (CF 2025+) --->\n<!--- Read CSV --->\n<cfset csvData = CSVRead("data.csv")>\n\n<!--- Write CSV --->\n<cfset data = [\n    ["Name", "Age", "City"],\n    ["John", "30", "NYC"],\n    ["Jane", "25", "LA"]\n]>\nCSVWrite("output.csv", data)\n\n<!--- Process CSV --->\n<cfset processed = CSVProcess("input.csv", function(row) {\n    return row.map(function(cell) {\n        return UCase(cell);\n    });\n})>',
+                        code: `<!--- CSV functions (CF 2025+) --->
+<cfscript>
+    // For demos, use the current template folder so files are web-accessible when appropriate
+    baseDir = getDirectoryFromPath(getCurrentTemplatePath());
+
+    // 1) Write a CSV from an array of arrays
+    outCsv = baseDir & "demo-output.csv";
+    data = [
+        ["Name", "Age", "City"],
+        ["John", "30", "NYC"],
+        ["Jane", "25", "LA"]
+    ];
+    CSVWrite(data, "arrayOfCFArray", outCsv);
+
+    // 2) Read the CSV back as a query
+    // CSVRead(source, outputFormat [, rowFilter] [, csvFormatConfiguration])
+    q = CSVRead(outCsv, "query");
+    writeDump(q);
+
+    // 3) Process a CSV row-by-row (no need to load whole file into memory)
+    // CSVProcess(filePath, rowProcessor, rowFilter [, csvFormatConfiguration])
+    valuesProcessed = 0;
+    CSVProcess(
+        outCsv,
+        (row, rowNumber) => { valuesProcessed += arrayLen(row); },
+        (row, rowNumber) => true,
+        {}
+    );
+    writeOutput("<p>Cells processed: " & valuesProcessed & "</p>");
+</cfscript>
+<p><a href="demo-output.csv" target="_blank">Open generated CSV</a></p>`,
                         codeTitle: 'CSV Functions (CF 2025+)'
+                    },
+                    {
+                        title: 'Charting enhancements (SVG + cfchartset)',
+                        versionBadge: '2025',
+                        content: 'ColdFusion 2025 expands server-side charting with SVG support and adds <code>&lt;cfchartset&gt;</code> for multi-chart layouts (dashboards).',
+                        list: [
+                            '<strong>SVG rendering:</strong> Use <code>renderer="svg"</code> (and/or <code>format="svg"</code>) for scalable output',
+                            '<strong>New chart types + customization:</strong> Boxplot, donut, area, plus themes/markers/rules/animation',
+                            '<strong>Multiple charts per container:</strong> Use <code>&lt;cfchartset&gt;</code> with grid/horizontal/vertical layouts'
+                        ],
+                        code: '<!--- CF 2025+ - SVG chart (server-side) --->\n<cfchart type="bar" renderer="svg" format="svg" title="Sales by Month" width="600" height="300">\n    <cfchartseries type="bar" serieslabel="2026">\n        <cfchartdata item="Jan" value="10">\n        <cfchartdata item="Feb" value="14">\n        <cfchartdata item="Mar" value="9">\n    </cfchartseries>\n</cfchart>\n\n<!--- CF 2025+ - Multiple charts in one container --->\n<cfchartset format="html" layout="horizontal" renderer="svg" width="900" height="350">\n    <cfchart type="pie" title="Mix">\n        <cfchartseries>\n            <cfchartdata item="A" value="40">\n            <cfchartdata item="B" value="60">\n        </cfchartseries>\n    </cfchart>\n\n    <cfchart type="line" title="Trend">\n        <cfchartseries>\n            <cfchartdata item="Jan" value="5">\n            <cfchartdata item="Feb" value="7">\n            <cfchartdata item="Mar" value="6">\n        </cfchartseries>\n    </cfchart>\n</cfchartset>',
+                        codeTitle: 'SVG charts and cfchartset (CF 2025+)'
                     },
                     {
                         title: 'Enhanced Spreadsheet Functions',
@@ -1894,7 +2070,7 @@ function getModule8Data() {
                         ]
                     }
                 ],
-                tip: 'ColdFusion 2025 represents a major step forward with interfaces, enhanced language features, and a modern licensing model. Review the <a href="https://helpx.adobe.com/coldfusion/using/whats-new.html" target="_blank">official documentation</a> for complete details.'
+                tip: 'ColdFusion 2025 represents a major step forward with licensing changes, spreadsheet/CSV upgrades, charting enhancements, and language improvements. Review the <a href="https://helpx.adobe.com/coldfusion/using/whats-new.html" target="_blank">official documentation</a> for complete details.'
             },
             {
                 title: 'Version Comparison Summary',
@@ -1918,7 +2094,7 @@ function getModule8Data() {
                     {
                         title: 'CF 2023 → CF 2025 Key Changes:',
                         list: [
-                            '✅ Interface support for CFCs',
+                            '✅ Charting enhancements (SVG + new capabilities, cfchartset)',
                             '✅ Multiple exception handling in catch statements',
                             '✅ Trailing comma support',
                             '✅ New CSV functions (CSVRead, CSVWrite, CSVProcess)',
@@ -1935,7 +2111,7 @@ function getModule8Data() {
                         title: 'Migration Considerations:',
                         list: [
                             '<strong>From 2021 to 2023:</strong> Focus on property visibility and cloud storage adoption',
-                            '<strong>From 2023 to 2025:</strong> Consider interfaces, new licensing model, and CSV/spreadsheet enhancements',
+                            '<strong>From 2023 to 2025:</strong> Consider licensing changes, CSV/streaming spreadsheet upgrades, and charting enhancements',
                             '<strong>Testing:</strong> Always test applications thoroughly when upgrading versions',
                             '<strong>Deprecated Features:</strong> Review deprecated features list for each version',
                             '<strong>Documentation:</strong> Refer to official Adobe migration guides'

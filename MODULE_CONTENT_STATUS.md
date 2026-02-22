@@ -21,7 +21,7 @@ Use this with **@README.md** when resuming to see which modules need lessons. Co
 
 ## Summary
 
-- **7 modules need full lessons from scratch:** 4, 5, 6, 7, 10, 11, 12.
+- **6 modules need full lessons from scratch:** 5, 6, 7, 10, 11, 12.
 - **11 modules need outline → full content:** 13–23 (AI track). Use **AI_OUTLINE_MAPPING.md** for topic codes; expand from CF 2025.07 Alpha Refresh when available.
 
 ## Suggested order to fill (pick one track)
