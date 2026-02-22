@@ -1,0 +1,35 @@
+---
+description: ColdFusion code must follow Adobe then CFDocs; flag when they disagree
+alwaysApply: true
+---
+
+# ColdFusion code standards
+
+Whenever writing or editing ColdFusion/CFML code (in .cfm, .cfc, or code examples in modules-data.js / code-samples):
+
+## Authoritative references (use every time)
+
+1. **Primary:** [Adobe ColdFusion User Guide](https://helpx.adobe.com/coldfusion/user-guide.html) — tags, functions, and behavior. Prefer examples and syntax from here.
+2. **Secondary:** [CFDocs](https://cfdocs.org/) — use when the Adobe guide does not have the tag, function, or a suitable example. CFDocs is third-party; treat as fallback.
+3. **Do not use** the old/legacy training repo (e.g. bsappey/cf-training) for code or examples. It was used to bootstrap; some content was incorrect or CF 2021–only. Only Adobe + CFDocs (and this repo’s already-verified content) are authoritative.
+
+## Rules
+
+- **Verify syntax and usage** against the primary (Adobe) source. If Adobe has no coverage, use CFDocs and note in a comment that the reference is CFDocs.
+- **Cross-check when both have the topic:** If both Adobe and CFDocs document the same tag/function, ensure the code agrees with both. If they disagree (syntax, attribute names, behavior), **flag it to the user** with a short note, e.g. “Adobe says X; CFDocs says Y — please confirm which to follow,” and prefer Adobe unless the user specifies otherwise.
+- **Stay to spec:** Do not use deprecated or undocumented behavior without a comment. Prefer the form shown in the Adobe User Guide (tag vs script, attribute naming, etc.).
+
+## How the user will know (required after writing CF code)
+
+**Always state in your reply** after writing or suggesting ColdFusion code, so the user can see whether the rule was followed:
+
+- **If verified:** e.g. “Verified against Adobe User Guide for [tag/function]” or “Verified against Adobe; CFDocs agrees.”
+- **If sources disagree:** Start with **“FLAG — Adobe vs CFDocs:”** then one line describing the difference and what you used (e.g. “Attribute name differs: Adobe uses `x`, CFDocs uses `y`. Used Adobe.”). The user can then decide.
+- **If only CFDocs was used:** e.g. “Adobe has no doc for [X]; used CFDocs only.”
+
+If you skip this line, the user has no way to know the rule was applied. Always include it.
+
+## Quick links
+
+- Adobe: https://helpx.adobe.com/coldfusion/user-guide.html  
+- CFDocs: https://cfdocs.org/

@@ -1,0 +1,23 @@
+es — you can safely stop and resume later (your work is saved locally)
+All the edits we made are on disk in your workspace, so if you come back on the same machine without resetting/cleaning the repo, you can pick up exactly where you left off.
+What changed today (so you know what to reopen)
+Main content edits: assets/js/modules-data.js
+Module 0: counts fixed (24 modules), AI track summary added, CommandBox tone softened, formatting cleaned (nested lists)
+Module 1: scope resolution clarification, queryExecute param syntax fixes, cookie syntax fixes, session logout corrected
+Module 2: expanded with input handling + sessions content
+Module 3: removed the incorrect “new Query() removed” claims
+Status tracker: MODULE_CONTENT_STATUS.md (summary corrected to 7 empty core modules: 4,5,6,7,10,11,12)
+README: README.md currently has local modifications (it already reflects 24 modules + AI track correctly).
+Important note (git)
+Right now, git status shows:
+README.md is modified (not committed)
+Most of the project (including assets/ and MODULE_CONTENT_STATUS.md) is untracked in git right now
+That means:
+Resuming later on this same machine: fine.
+Resuming on another machine / after a clean checkout: you should commit (or at least stash + ensure untracked files are added) so nothing is lost.
+Quick “resume checklist” for next time
+Open/reference these:
+@README.md
+@MODULE_CONTENT_STATUS.md
+assets/js/modules-data.js (jump to getModule0Data(), getModule1Data(), getModule2Data(), getModule3Data())
+If you want, tell me “make a WIP commit so I can resume anywhere” and I’ll stage the right files and commit them (no push unless you ask).

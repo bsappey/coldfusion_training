@@ -1,0 +1,12 @@
+{
+    "app":{
+        "cfengine":"adobe@2023"
+    },
+    "engine":"@adobe2023",
+    "name":"ColdFusion Training",
+    "web":{
+        "rewrites":{
+            "enable":true
+        }
+    }
+}

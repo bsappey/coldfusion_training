@@ -1,0 +1,1463 @@
+/* ============================================
+   ColdFusion Training - Adobe Branded Styles
+   Matching Adobe ColdFusion Enterprise Design
+   Modernized CSS with latest standards
+   ============================================ */
+
+:root {
+    /* Adobe ColdFusion Brand Colors */
+    --adobe-primary: #1473E6;
+    --adobe-primary-dark: #0D5BB8;
+    --adobe-primary-light: #3B8FF7;
+    --adobe-dark: #2C2C2C;
+    --adobe-dark-light: #3A3A3A;
+    --adobe-gray: #BFBFC4;
+    --adobe-light: #F5F5F5;
+    --adobe-white: #FFFFFF;
+    
+    /* Semantic Colors */
+    --success-color: #00C853;
+    --info-color: #1473E6;
+    --warning-color: #FF9800;
+    --danger-color: #E53935;
+    
+    /* UI Variables - Using modern CSS custom properties */
+    --border-radius: 0.5rem;
+    --box-shadow: 0 2px 8px rgba(20, 115, 230, 0.1);
+    --box-shadow-lg: 0 4px 16px rgba(20, 115, 230, 0.15);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Responsive Typography - Using clamp() */
+    --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --font-size-h1: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+    --font-size-h2: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
+    --font-size-h3: clamp(1.25rem, 1.125rem + 0.625vw, 1.75rem);
+    
+    /* Spacing - Using logical properties */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* Touch target size for mobile */
+    --touch-target-min: 44px;
+}
+
+/* Global Styles - Modern CSS */
+body {
+    font-family: "Adobe Clean", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding-block-start: 76px; /* Logical property */
+    background-color: var(--adobe-light);
+    color: var(--adobe-dark);
+    line-height: 1.6;
+    font-size: var(--font-size-base);
+}
+
+/* Typography - Using clamp() for responsive sizing */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--adobe-dark);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: var(--font-size-h1);
+}
+
+h2 {
+    font-size: var(--font-size-h2);
+}
+
+h3 {
+    font-size: var(--font-size-h3);
+}
+
+/* Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Responsive Design - Mobile First */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: clamp(1.75rem, 5vw, 2.5rem);
+    }
+    
+    .training-module-card {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* Ensure touch targets are at least 44x44px */
+    .btn, .nav-link, .form-check-input {
+        min-height: var(--touch-target-min);
+        min-width: var(--touch-target-min);
+    }
+    
+    /* Stack navigation on mobile */
+    .navbar-nav {
+        margin-top: var(--spacing-sm);
+    }
+}
+
+/* Container Queries for Component-Level Responsiveness */
+@container (max-width: 600px) {
+    .code-sample {
+        font-size: 0.875rem;
+    }
+    
+    .code-header .btn-group {
+        flex-wrap: wrap;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets for mobile */
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    /* Remove hover effects on touch devices */
+    .training-module-card:hover {
+        transform: none;
+    }
+}
+
+/* Hero Section - Adobe Style */
+.hero-section {
+    background: linear-gradient(135deg, var(--adobe-primary) 0%, var(--adobe-primary-dark) 100%);
+    color: var(--adobe-white);
+    position: relative;
+    padding: 100px 0 80px;
+    margin-top: -76px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Add overlay for better text contrast */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-icon {
+    font-size: 80px;
+    opacity: 0.95;
+    color: var(--adobe-white);
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-content h1 {
+    color: var(--adobe-white) !important;
+    font-weight: 700;
+    font-size: var(--font-size-h1);
+    margin-block-end: var(--spacing-lg); /* Logical property */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Improve lead text contrast */
+.hero-section .lead {
+    color: rgba(255, 255, 255, 0.98) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* Improve badge visibility in hero section */
+.hero-section .badge {
+    text-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-section .badge.bg-light {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: var(--adobe-primary) !important;
+    font-weight: 500;
+}
+
+/* Lesson Navigation Styling - Proper Indentation */
+#lessonNav .list-group-item {
+    border-left: none;
+    border-right: none;
+    transition: background-color 0.2s ease;
+}
+
+#lessonNav .list-group-item:first-child {
+    border-top: none;
+}
+
+#lessonNav .list-group-item.sub-section {
+    padding-left: 2rem !important; /* Base indent for sub-sections (1.1, 1.2, etc.) */
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Nested sub-sections get more indent */
+#lessonNav .sub-section.ps-4 {
+    padding-left: 2rem !important;
+}
+
+#lessonNav .sub-section.ps-5 {
+    padding-left: 3rem !important; /* For 1.3.1, 1.3.2, etc. */
+}
+
+#lessonNav .sub-section.ps-6 {
+    padding-left: 4rem !important; /* For deeper nesting */
+}
+
+#lessonNav .sub-section.ps-7 {
+    padding-left: 5rem !important; /* For even deeper nesting */
+}
+
+/* Visual indicator for nested items */
+#lessonNav .sub-section {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+#lessonNav .sub-section:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Ensure sub-sections container has proper spacing */
+#lessonNav .sub-sections {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 0;
+}
+
+/* Fix active state text visibility - ensure text is clear and not blurred */
+#lessonNav .list-group-item.active {
+    background-color: var(--adobe-primary) !important;
+    color: var(--adobe-white) !important;
+    border-color: var(--adobe-primary);
+    font-weight: 500;
+    text-shadow: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#lessonNav .list-group-item.active .badge {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: var(--adobe-white) !important;
+    font-weight: 600;
+}
+
+#lessonNav .list-group-item.active span:not(.badge) {
+    color: var(--adobe-white) !important;
+    font-weight: 500;
+    opacity: 1 !important;
+}
+
+/* Ensure active sub-sections are also clearly visible */
+#lessonNav .sub-section.active {
+    background-color: var(--adobe-primary) !important;
+    color: var(--adobe-white) !important;
+    font-weight: 500;
+}
+
+#lessonNav .sub-section.active .badge {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: var(--adobe-white) !important;
+    font-weight: 600;
+}
+
+#lessonNav .sub-section.active span:not(.badge) {
+    color: var(--adobe-white) !important;
+    font-weight: 500;
+    opacity: 1 !important;
+}
+
+/* Ensure back button is visible in module header */
+.bg-primary .btn-light[href*="index.cfm"] {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: var(--adobe-primary) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    font-weight: 500;
+    display: inline-flex !important;
+    align-items: center;
+}
+
+.bg-primary .btn-light[href*="index.cfm"]:hover {
+    background-color: var(--adobe-white) !important;
+    color: var(--adobe-primary-dark) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Removed duplicate - using .hero-section .lead instead */
+    font-weight: 400;
+}
+
+/* Module Cards - Adobe Style */
+.training-module-card {
+    transition: var(--transition);
+    border: 1px solid rgba(20, 115, 230, 0.1);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--adobe-white);
+    height: 100%;
+}
+
+.training-module-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--box-shadow-lg);
+    border-color: var(--adobe-primary-light);
+}
+
+.training-module-card .card-body {
+    padding: 1.5rem;
+}
+
+.training-module-card .avatar {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* Code Samples - Modern CSS Grid/Flexbox */
+.code-sample {
+    background: #1e1e1e;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-block: var(--spacing-lg); /* Logical property */
+    box-shadow: var(--box-shadow-lg);
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.code-sample .file-path-display {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+
+.code-header {
+    background: #2d2d2d;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #3d3d3d !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.code-sample pre {
+    margin: 0;
+    padding: 1.5rem;
+    background: #1e1e1e !important;
+    overflow-x: auto;
+    color: #e8e8e8 !important;
+    border: none !important;
+}
+
+/* Override Prism theme border completely */
+.code-sample pre[class*="language-"] {
+    border: none !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+}
+
+.code-sample code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #e8e8e8 !important;
+    background: transparent !important;
+}
+
+/* Lesson Content */
+.lesson-content {
+    display: none;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.lesson-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Quiz Styles */
+.quiz-question {
+    margin-bottom: 1.5rem;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.quiz-question.answered {
+    border-color: var(--info-color);
+}
+
+.quiz-question.correct {
+    border-color: var(--success-color);
+    background-color: rgba(25, 135, 84, 0.05);
+}
+
+.quiz-question.incorrect {
+    border-color: var(--danger-color);
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.quiz-question .form-check {
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s ease;
+}
+
+.quiz-question .form-check:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.quiz-question .form-check-input:checked + .form-check-label {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Progress Bars - Adobe Style */
+.progress {
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.2);
+    height: 8px;
+}
+
+.progress-bar {
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: var(--adobe-white);
+}
+
+.bg-primary .progress-bar {
+    background-color: var(--adobe-white);
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+}
+
+/* Stat Cards */
+.stat-card {
+    padding: 1rem;
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* Module Header - Adobe Style */
+.module-header,
+.quiz-header {
+    margin-top: -76px;
+    padding-top: 100px;
+    background: linear-gradient(135deg, var(--adobe-primary) 0%, var(--adobe-primary-dark) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.module-header::before,
+.quiz-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.module-header .breadcrumb,
+.quiz-header .breadcrumb {
+    position: relative;
+    z-index: 1;
+}
+
+.module-header h2,
+.quiz-header h2 {
+    color: var(--adobe-white);
+    position: relative;
+    z-index: 1;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    margin-bottom: 0;
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+/* Alerts - Adobe Style */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    padding: 1rem 1.25rem;
+    font-weight: 400;
+}
+
+.alert-info {
+    background-color: rgba(20, 115, 230, 0.1);
+    color: var(--adobe-primary-dark);
+    border-left: 4px solid var(--adobe-primary);
+}
+
+.alert-success {
+    background-color: rgba(0, 200, 83, 0.1);
+    color: #006B2E;
+    border-left: 4px solid var(--success-color);
+}
+
+.alert-warning {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: #B86200;
+    border-left: 4px solid var(--warning-color);
+}
+
+.alert-danger {
+    background-color: rgba(229, 57, 53, 0.1);
+    color: #B71C1C;
+    border-left: 4px solid var(--danger-color);
+}
+
+/* Avatar */
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+}
+
+.avatar-xl {
+    width: 5rem;
+    height: 5rem;
+    font-size: 2.5rem;
+}
+
+.avatar-md {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+}
+
+/* Buttons - Adobe Style */
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    transition: var(--transition);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9375rem;
+    letter-spacing: 0.01em;
+}
+
+.btn-primary {
+    background-color: var(--adobe-primary);
+    border-color: var(--adobe-primary);
+    color: var(--adobe-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--adobe-primary-dark);
+    border-color: var(--adobe-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(20, 115, 230, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(20, 115, 230, 0.2);
+}
+
+.btn-outline-primary {
+    color: var(--adobe-primary);
+    border-color: var(--adobe-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--adobe-primary);
+    border-color: var(--adobe-primary);
+    color: var(--adobe-white);
+}
+
+.btn-outline-secondary {
+    color: var(--adobe-dark);
+    border-color: var(--adobe-gray);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--adobe-dark);
+    border-color: var(--adobe-dark);
+    color: var(--adobe-white);
+}
+
+/* Cards - Adobe Style */
+.card {
+    border: 1px solid rgba(20, 115, 230, 0.1);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    background: var(--adobe-white);
+}
+
+.card:hover {
+    box-shadow: var(--box-shadow-lg);
+    border-color: var(--adobe-primary-light);
+}
+
+.card-header {
+    background-color: var(--adobe-white);
+    border-bottom: 1px solid rgba(20, 115, 230, 0.1);
+    font-weight: 600;
+    color: var(--adobe-dark);
+    padding: 1.25rem 1.5rem;
+}
+
+/* List Group */
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.list-group-item.active {
+    background-color: var(--adobe-primary) !important;
+    color: var(--adobe-white) !important;
+    border-color: var(--adobe-primary);
+    font-weight: 500;
+    text-shadow: none;
+}
+
+.list-group-item.active .badge {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: var(--adobe-white) !important;
+    font-weight: 600;
+}
+
+.list-group-item.active span:not(.badge) {
+    color: var(--adobe-white) !important;
+    font-weight: 500;
+}
+
+/* Badges - Adobe Style */
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+}
+
+.bg-primary {
+    background-color: var(--adobe-primary) !important;
+}
+
+.bg-label-primary {
+    background-color: rgba(20, 115, 230, 0.1);
+    color: var(--adobe-primary);
+}
+
+.bg-label-success {
+    background-color: rgba(0, 200, 83, 0.1);
+    color: var(--success-color);
+}
+
+.bg-label-info {
+    background-color: rgba(20, 115, 230, 0.1);
+    color: var(--adobe-primary);
+}
+
+.bg-label-warning {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: var(--warning-color);
+}
+
+.bg-label-danger {
+    background-color: rgba(229, 57, 53, 0.1);
+    color: var(--danger-color);
+}
+
+.bg-label-secondary {
+    background-color: rgba(44, 44, 44, 0.1);
+    color: var(--adobe-dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+    
+    .hero-icon {
+        font-size: 60px;
+    }
+    
+    .stat-card h3 {
+        font-size: 2rem;
+    }
+    
+    .module-header,
+    .quiz-header {
+        padding-top: 80px;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Copy Button */
+.code-header .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Sticky Sidebar */
+.sticky-top {
+    position: sticky;
+    top: 80px;
+    z-index: 1020;
+}
+
+/* Results Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#quizResults {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Custom Scrollbar - Adobe Style */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--adobe-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--adobe-primary);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--adobe-primary-dark);
+}
+
+/* Navbar - Adobe Style */
+.navbar-dark.bg-primary {
+    background-color: var(--adobe-primary) !important;
+    box-shadow: 0 2px 8px rgba(20, 115, 230, 0.15);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.125rem;
+    letter-spacing: -0.01em;
+}
+
+/* Footer - Adobe Style */
+footer.bg-dark {
+    background-color: var(--adobe-dark) !important;
+    color: var(--adobe-gray);
+}
+
+/* Additional Adobe Styling */
+.text-muted {
+    color: #6C6C6C !important;
+}
+
+.breadcrumb-dark .breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.breadcrumb-dark .breadcrumb-item.active {
+    color: var(--adobe-white);
+}
+
+.breadcrumb-dark .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Version Badges */
+.version-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
+    letter-spacing: 0.02em;
+}
+
+.version-badge-2021 {
+    background-color: rgba(20, 115, 230, 0.1);
+    color: var(--adobe-primary);
+    border: 1px solid rgba(20, 115, 230, 0.2);
+}
+
+.version-badge-2023 {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+.version-badge-2025 {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(25, 135, 84, 0.2);
+}
+
+/* Enhanced Code Samples */
+.code-sample {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.code-header {
+    background: #2d2d2d;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #3d3d3d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.code-header .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+
+/* Instructor-Led Session Indicator */
+.instructor-led {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+    border-left: 4px solid var(--warning-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+}
+
+.instructor-led h6 {
+    color: var(--warning-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* Summary Card Enhancements */
+#moduleSummary {
+    border-width: 2px;
+}
+
+#moduleSummary .card-header {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Enhanced Lesson Cards */
+.lesson-content {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.lesson-content.active {
+    border-left-color: var(--adobe-primary);
+    box-shadow: 0 4px 12px rgba(20, 115, 230, 0.15);
+}
+
+/* Progress Indicators */
+.progress-indicator {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--adobe-light);
+    border: 2px solid var(--adobe-gray);
+    margin-right: 0.5rem;
+}
+
+.progress-indicator.completed {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.progress-indicator.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Enhanced Module Cards */
+.training-module-card .card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.training-module-card .card-body > *:last-child {
+    margin-top: auto;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .display-6 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .module-header,
+    .quiz-header,
+    footer,
+    .btn,
+    .code-header button {
+        display: none !important;
+    }
+    
+    .lesson-content {
+        page-break-inside: avoid;
+    }
+}
+
+/* Accessibility Enhancements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus States */
+.btn:focus,
+.form-check-input:focus,
+.nav-link:focus {
+    outline: 2px solid var(--adobe-primary);
+    outline-offset: 2px;
+}
+
+/* Loading Spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Syntax Switcher Buttons - Better Contrast */
+.code-header .btn-group {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .code-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .code-header .btn-group {
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+    
+    .code-header .btn-group .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.code-header .btn-group .btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-shadow: none;
+}
+
+.code-header .btn-group .btn:hover {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+}
+
+.code-header .btn-group .btn.active {
+    background-color: var(--adobe-primary) !important;
+    border-color: var(--adobe-primary) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(20, 115, 230, 0.3);
+}
+
+.code-header .btn-group .btn.active:hover {
+    background-color: var(--adobe-primary-dark) !important;
+    border-color: var(--adobe-primary-dark) !important;
+    color: #ffffff !important;
+}
+
+/* Copy button styling */
+.code-header .btn:not(.btn-group .btn) {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.code-header .btn:not(.btn-group .btn):hover {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+}
+
+.code-content pre {
+    margin: 0;
+    display: block;
+}
+
+/* File Saved Info */
+.file-saved-info {
+    border-left: 4px solid var(--success-color);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.file-saved-info code {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+}
+
+/* Code viewer - simple and clean */
+.code-content {
+    position: relative;
+}
+
+/* Override Prism dark theme brown border */
+pre[class*="language-"],
+code[class*="language-"],
+.code-sample pre[class*="language-"],
+.code-sample code[class*="language-"] {
+    border: none !important;
+    border: 0 !important;
+}
+
+/* Cursor-style Syntax Highlighting Override - Force visibility */
+.code-sample pre[class*="language-"],
+.code-sample code[class*="language-"],
+.code-sample pre,
+.code-sample code {
+    background: #1e1e1e !important;
+    color: #e8e8e8 !important;
+    border: none !important;
+}
+
+/* Override Prism theme colors completely */
+.code-sample pre code,
+.code-sample code,
+.code-sample pre code *,
+.code-sample code * {
+    color: #e8e8e8 !important;
+    background: transparent !important;
+}
+
+/* Force all text to be visible - highest priority */
+.code-sample pre code:not([class*="token"]),
+.code-sample code:not([class*="token"]) {
+    color: #e8e8e8 !important;
+}
+
+/* Make sure plain text shows up - but allow tokens to override */
+.code-sample pre:not([class*="language-"]),
+.code-sample code:not([class*="language-"]) {
+    color: #e8e8e8 !important;
+}
+
+/* Ensure language-coldfusion code blocks have proper base color */
+.code-sample pre.language-coldfusion,
+.code-sample code.language-coldfusion {
+    color: #e8e8e8 !important;
+}
+
+/* Base color for code blocks - but tokens override this */
+.code-sample pre code,
+.code-sample code {
+    color: #e8e8e8;
+}
+
+/* Ensure ALL tokens have a base color - this prevents white text */
+.code-sample .token,
+.code-sample code .token,
+.code-sample pre .token,
+.code-sample code[class*="language-"] .token,
+.code-sample pre[class*="language-"] .token,
+pre[class*="language-"] .token,
+code[class*="language-"] .token {
+    color: #e8e8e8 !important; /* Default to light gray if no specific rule matches */
+}
+
+/* Force color for any span inside code blocks that might be tokens */
+.code-sample code span,
+.code-sample pre span {
+    color: #e8e8e8;
+}
+
+/* Cursor-style Colors with Better Contrast - Force with !important */
+.code-sample .token.comment,
+.code-sample .token.prolog,
+.code-sample .token.doctype,
+.code-sample .token.cdata,
+.code-sample code .token.comment,
+.code-sample pre .token.comment,
+pre[class*="language-"] .token.comment,
+code[class*="language-"] .token.comment {
+    color: #6a9955 !important; /* Green comments - good contrast */
+    font-style: italic;
+}
+
+.code-sample .token.punctuation,
+.code-sample code .token.punctuation,
+.code-sample pre .token.punctuation {
+    color: #e8e8e8 !important; /* Light gray for punctuation - brighter */
+}
+
+.code-sample .token.property,
+.code-sample .token.tag,
+.code-sample .token.boolean,
+.code-sample .token.number,
+.code-sample .token.constant,
+.code-sample .token.symbol,
+.code-sample .token.deleted {
+    color: #b5cea8 !important; /* Light green for numbers/constants */
+}
+
+.code-sample .token.selector,
+.code-sample .token.attr-name,
+.code-sample .token.string,
+.code-sample .token.char,
+.code-sample .token.builtin,
+.code-sample .token.inserted {
+    color: #dcdcaa !important; /* Yellow for strings - no brown */
+}
+
+/* Override string color - yellow, not brown */
+.code-sample .token.string,
+.code-sample code .token.string,
+.code-sample pre .token.string {
+    color: #dcdcaa !important; /* Yellow for strings - no brown/orange */
+}
+
+.code-sample .token.operator,
+.code-sample .token.entity,
+.code-sample .token.url,
+.code-sample .language-css .token.string,
+.code-sample .style .token.string {
+    color: #d4d4d4 !important; /* Light gray for operators */
+}
+
+.code-sample .token.atrule,
+.code-sample .token.attr-value,
+.code-sample .token.keyword {
+    color: #569cd6 !important; /* Blue for keywords - good contrast */
+    font-weight: 500;
+}
+
+.code-sample .token.function,
+.code-sample .token.class-name {
+    color: #4ec9b0 !important; /* Cyan for functions - better for ColdFusion */
+}
+
+.code-sample .token.regex,
+.code-sample .token.important,
+.code-sample .token.variable {
+    color: #9cdcfe !important; /* Light blue for variables - better than brown */
+}
+
+/* ColdFusion-specific tag highlighting with better contrast */
+.code-sample code.language-coldfusion .token.tag,
+.code-sample pre.language-coldfusion .token.tag,
+code.language-coldfusion .token.tag,
+pre[class*="language-coldfusion"] .token.tag {
+    color: #569cd6 !important; /* Blue for CF tags */
+    font-weight: 500;
+}
+
+/* Tag syntax keywords (cfif, cfset, etc.) */
+.code-sample code.language-coldfusion .token.tag-keyword,
+.code-sample pre.language-coldfusion .token.tag-keyword,
+code.language-coldfusion .token.tag-keyword,
+pre[class*="language-coldfusion"] .token.tag-keyword,
+.code-sample .token.tag-keyword {
+    color: #569cd6 !important; /* Blue for CF tag keywords */
+    font-weight: 500;
+}
+
+/* Script syntax keywords (var, if, else, function, etc.) */
+.code-sample code.language-coldfusion .token.script-keyword,
+.code-sample pre.language-coldfusion .token.script-keyword,
+code.language-coldfusion .token.script-keyword,
+pre[class*="language-coldfusion"] .token.script-keyword,
+.code-sample .token.script-keyword {
+    color: #c586c0 !important; /* Purple for script keywords */
+    font-weight: 500;
+}
+
+/* Legacy keyword support (for backward compatibility) */
+.code-sample code.language-coldfusion .token.keyword,
+.code-sample pre.language-coldfusion .token.keyword,
+code.language-coldfusion .token.keyword,
+pre[class*="language-coldfusion"] .token.keyword,
+.code-sample .token.keyword {
+    color: #c586c0 !important; /* Purple for keywords */
+    font-weight: 500;
+}
+
+.code-sample code.language-coldfusion .token.function,
+.code-sample pre.language-coldfusion .token.function,
+code.language-coldfusion .token.function,
+pre[class*="language-coldfusion"] .token.function,
+.code-sample .token.function {
+    color: #4ec9b0 !important; /* Cyan for CF functions */
+}
+
+/* ColdFusion variable syntax (#variable#) */
+.code-sample code.language-coldfusion .token.variable,
+.code-sample pre.language-coldfusion .token.variable,
+code.language-coldfusion .token.variable,
+pre[class*="language-coldfusion"] .token.variable,
+.code-sample .token.variable {
+    color: #9cdcfe !important; /* Light blue for variables */
+}
+
+/* ColdFusion boolean values */
+.code-sample code.language-coldfusion .token.boolean,
+.code-sample pre.language-coldfusion .token.boolean,
+code.language-coldfusion .token.boolean,
+pre[class*="language-coldfusion"] .token.boolean,
+.code-sample .token.boolean {
+    color: #569cd6 !important; /* Blue for booleans */
+}
+
+/* ColdFusion numbers */
+.code-sample code.language-coldfusion .token.number,
+.code-sample pre.language-coldfusion .token.number,
+code.language-coldfusion .token.number,
+pre[class*="language-coldfusion"] .token.number,
+.code-sample .token.number {
+    color: #b5cea8 !important; /* Light green for numbers */
+}
+
+/* ColdFusion strings */
+.code-sample code.language-coldfusion .token.string,
+.code-sample pre.language-coldfusion .token.string,
+code.language-coldfusion .token.string,
+pre[class*="language-coldfusion"] .token.string,
+.code-sample .token.string {
+    color: #dcdcaa !important; /* Yellow for strings */
+}
+
+/* ColdFusion comments */
+.code-sample code.language-coldfusion .token.comment,
+.code-sample pre.language-coldfusion .token.comment,
+code.language-coldfusion .token.comment,
+pre[class*="language-coldfusion"] .token.comment,
+.code-sample .token.comment {
+    color: #6a9955 !important; /* Green for comments */
+    font-style: italic;
+}
+
+/* ColdFusion operators */
+.code-sample code.language-coldfusion .token.operator,
+.code-sample pre.language-coldfusion .token.operator,
+code.language-coldfusion .token.operator,
+pre[class*="language-coldfusion"] .token.operator,
+.code-sample .token.operator {
+    color: #d4d4d4 !important; /* Light gray for operators */
+}
+
+/* ColdFusion scope names (Variables, Session, Application, etc.) */
+.code-sample code.language-coldfusion .token.scope,
+.code-sample pre.language-coldfusion .token.scope,
+code.language-coldfusion .token.scope,
+pre[class*="language-coldfusion"] .token.scope,
+.code-sample .token.scope {
+    color: #4fc1ff !important; /* Bright blue for scope names */
+    font-weight: 500;
+}
+
+/* ColdFusion property access (dot notation) */
+.code-sample code.language-coldfusion .token.property,
+.code-sample pre.language-coldfusion .token.property,
+code.language-coldfusion .token.property,
+pre[class*="language-coldfusion"] .token.property,
+.code-sample .token.property {
+    color: #dcdcaa !important; /* Yellow for properties */
+}
+
+/* Ensure plain text in code blocks is visible - but don't override token colors */
+.code-sample code:not(.token):not([class*="token"]),
+.code-sample pre code:not(.token):not([class*="token"]) {
+    color: #e8e8e8 !important;
+}
+
+/* Fallback for any unhighlighted text - but allow tokens to have colors */
+.code-sample pre:not([class*="language-"]) *:not(.token),
+.code-sample code:not([class*="language-"]) *:not(.token) {
+    color: #e8e8e8 !important;
+}
+
+/* Don't override token colors - let specific token type rules apply */
+/* Token colors are defined below for each token type */
+
+/* Base color for language-coldfusion blocks */
+.code-sample pre[class*="language-coldfusion"],
+.code-sample code[class*="language-coldfusion"] {
+    color: #e8e8e8 !important;
+}
+
+/* Token colors are defined in specific rules below - don't force inherit */
+
+/* Final fallback - make everything visible but respect tokens */
+.code-sample {
+    color: #e8e8e8 !important;
+}
+
+/* Token colors are defined below - don't force inherit */
+
+/* Base color for language code - but tokens override */
+pre[class*="language-"] code,
+code[class*="language-"] {
+    color: #e8e8e8;
+}
+
+/* Tokens get their own colors - don't force white */
+pre[class*="language-"] code .token,
+code[class*="language-"] .token {
+    /* Token colors defined in specific rules */
+}
+
+/* Base color for code - tokens override */
+.code-sample pre code,
+.code-sample code {
+    color: #e8e8e8;
+}
+
+/* Tokens get their own colors */
+.code-sample pre code .token,
+.code-sample code .token {
+    /* Token colors defined in specific rules */
+}
+
+/* Make sure operators and plain text are bright */
+.code-sample .token.operator,
+.code-sample code .token.operator {
+    color: #e8e8e8 !important;
+}
+
+/* Ensure all non-token text is visible */
+.code-sample pre code:not(.token),
+.code-sample code:not(.token) {
+    color: #e8e8e8 !important;
+}
+

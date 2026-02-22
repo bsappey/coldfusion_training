@@ -1,0 +1,13 @@
+---
+description: Read README first for project context when resuming work
+alwaysApply: true
+---
+
+# Project context
+
+When working in this repository:
+
+1. **Read README.md first** for project context (module structure, source of truth, conventions). This reduces wasted tokens and keeps changes consistent.
+2. For AI track (modules 13–23) or Adobe outline mapping, also use **AI_OUTLINE_MAPPING.md**.
+3. For adding or editing module/lesson content, follow **HOW-TO-CREATE-MODULES.md** and the patterns in `assets/js/modules-data.js`.
+4. **Do not use the old/legacy training repo** (e.g. bsappey/cf-training) as the source for code or lesson content. It was used to bootstrap this project; some examples were incorrect or CF 2021–only. This repo plus Adobe User Guide and CFDocs are authoritative. See **LEGACY_SOURCES.md** if needed.
